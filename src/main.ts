@@ -10,6 +10,8 @@ async function bootstrap() {
       whitelist: true,
       // 白名单报错
       forbidNonWhitelisted: true,
+      // 全局对象转换
+      transform: true,
     }),
   );
   await app.listen(3000);

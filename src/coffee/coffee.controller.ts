@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   Patch,
   Post,
@@ -16,10 +14,10 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 @Controller('coffee')
 export class CoffeeController {
   constructor(private readonly coffeeService: CoffeeService) {}
-  @Get()
-  finAll(@Param() body) {
-    return this.coffeeService.finAll();
-  }
+  // @Get()
+  // finAll(@Param() body) {
+  //   return this.coffeeService.finAll();
+  // }
 
   // @Get(':id')
   // finOne(@Param() params) {
@@ -32,8 +30,10 @@ export class CoffeeController {
    * @returns
    */
   @Get(':id')
-  finOne(@Param('id') id: string) {
-    return this.coffeeService.finOne(id);
+  finOne(@Param('id') id: number) {
+    console.log(typeof id);
+
+    return this.coffeeService.finOne('' + id);
   }
 
   // @Post()
@@ -42,8 +42,8 @@ export class CoffeeController {
   // }
 
   @Post()
-  @HttpCode(HttpStatus.GONE)
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
+    console.log(createCoffeeDto instanceof CreateCoffeeDto);
     return this.coffeeService.create(createCoffeeDto);
   }
 
