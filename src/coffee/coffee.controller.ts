@@ -14,10 +14,10 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 @Controller('coffee')
 export class CoffeeController {
   constructor(private readonly coffeeService: CoffeeService) {}
-  // @Get()
-  // finAll(@Param() body) {
-  //   return this.coffeeService.finAll();
-  // }
+  @Get()
+  finAll(@Param() body) {
+    return this.coffeeService.finAll();
+  }
 
   // @Get(':id')
   // finOne(@Param() params) {

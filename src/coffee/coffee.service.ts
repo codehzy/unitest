@@ -1,45 +1,48 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateCoffeeDto } from './dto/create-coffee.dto';
+import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { Coffee } from './entities/coffee.entity';
 
 @Injectable()
 export class CoffeeService {
-  private coffees: Coffee[] = [
-    {
-      id: 1,
-      name: 'hzy name is hzy',
-      brand: 'buddy brew',
-      flavors: ['chocolate', 'vanilla'],
-    },
-  ];
+  // 数据库获得实体
+  constructor(
+    @InjectRepository(Coffee)
+    private readonly coffeesRepository: Repository<Coffee>,
+  ) {}
 
   finAll() {
-    return this.coffees;
+    return this.coffeesRepository.find();
   }
 
-  finOne(id: string) {
-    const coffee = this.coffees.find((item) => item.id === +id);
+  async finOne(id: string) {
+    const coffee = await this.coffeesRepository.findOne(id);
     if (!coffee) {
       return new NotFoundException(`Coffee #${id} not found`);
     }
     return coffee;
   }
 
-  create(createCoffeeDto: any) {
-    this.coffees.push(createCoffeeDto);
-    return createCoffeeDto;
+  create(createCoffeeDto: CreateCoffeeDto) {
+    const coffee = this.coffeesRepository.create(createCoffeeDto);
+    return this.coffeesRepository.save(coffee);
   }
 
-  update(id: string, updateCoffeeDto: any) {
-    const existingCoffee = this.finOne(id);
-    if (existingCoffee) {
-      // 更新操作
+  async update(id: string, updateCoffeeDto: UpdateCoffeeDto) {
+    const coffee = await this.coffeesRepository.preload({
+      id: +id,
+      ...updateCoffeeDto,
+    });
+    if (!coffee) {
+      throw new NotFoundException(`Coffee #${id} not found`);
     }
+    return this.coffeesRepository.save(coffee);
   }
 
-  remove(id: string) {
-    const coffeeIndex = this.coffees.findIndex((item) => item.id === +id);
-    if (coffeeIndex >= 0) {
-      this.coffees.splice(coffeeIndex, 1);
-    }
+  async remove(id: string) {
+    const coffee = (await this.finOne(id)) as Coffee;
+    return this.coffeesRepository.remove(coffee);
   }
 }
