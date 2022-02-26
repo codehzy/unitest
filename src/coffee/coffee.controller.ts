@@ -30,10 +30,10 @@ export class CoffeeController {
    * @returns
    */
   @Get(':id')
-  finOne(@Param('id') id: number) {
+  finOne(@Param('id') id: string) {
     console.log(typeof id);
 
-    return this.coffeeService.finOne('' + id);
+    return this.coffeeService.finOne(id);
   }
 
   // @Post()
@@ -43,7 +43,7 @@ export class CoffeeController {
 
   @Post()
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
-    console.log(createCoffeeDto instanceof CreateCoffeeDto);
+    // console.log(createCoffeeDto instanceof CreateCoffeeDto);
     return this.coffeeService.create(createCoffeeDto);
   }
 
